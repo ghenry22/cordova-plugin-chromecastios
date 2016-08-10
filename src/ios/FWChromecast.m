@@ -22,6 +22,11 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(receiveStatusEvent:) name:@"statusEvent" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(receiveDeviceEvent:) name:@"deviceEvent" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(receiveDisconnectEvent:) name:@"disconnectEvent" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(receiveVolumeEvent:) name:@"volumeEvent" object:nil];
+}
+
+- (void)receiveVolumeEvent:(NSNotification *)notification {
+  NSLog(@"Need to debounce this probably");
 }
 
 - (void)receiveStatusEvent:(NSNotification *)notification {
@@ -279,6 +284,8 @@
 -(void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"statusEvent" object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"deviceEvent" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"disconnectEvent" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"volumeEvent" object:nil];
 }
 
 @end
