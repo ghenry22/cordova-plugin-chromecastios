@@ -7,9 +7,15 @@ This plugin provides an interface to cast media from within cordova apps on iOS 
 
 Currently only accomodates specifying generic media metadata but otherwise is fully functional
 
+For most events where we care about the device response the plugin implements Promises so you don't have to deal with callbacks.
+
 ## Install
 
+    //Latest from github master
     cordova plugin add https://github.com/ghenry22/cordova-plugin-chromecastios.git
+    
+    //latest published release from npm
+    cordova plugin add cordova-plugin-chromecastios
 
 ## Usage
 
@@ -161,10 +167,15 @@ cordova.plugins.chromecastios has several properties to provide you with informa
 ### Events
 
 cordova.plugins.chromecastios emits 2 types of events, device events and media status events
+
 Every event returns an event object which will have:
+
 event.eventType = to differentiate different event sources
+
 event.statusEvent = included with media status events, contains media status at time of the event
+
 event.deviceEvent = included with device events, contains the device object for the affected device
+
     
 Media Status Events
 

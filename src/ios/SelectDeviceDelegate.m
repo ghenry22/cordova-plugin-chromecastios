@@ -28,16 +28,17 @@
 }
 
 - (void)launchApplication:(NSString *)receiverAppId {
-    [self.deviceManager launchApplication:receiverAppId];
+    //Launch the application, relaunch if already running so app is always in clean state
+    [self.deviceManager launchApplication:receiverAppId withLaunchOptions:[[GCKLaunchOptions alloc] initWithRelaunchIfRunning:YES]];
 }
 
 - (void)joinApplication:(NSString *)receiverAppId {
     //check if the currently running app is actually what we want to join
-    //if it is, join it, if it is not then launch the desired app
+    //if it is, join it, if it is not then launch the desired app with relaunch
     if(receiverAppId == self.deviceManager.applicationMetadata.applicationID){
         [self.deviceManager joinApplication:receiverAppId];
     } else {
-        [self.deviceManager launchApplication:receiverAppId];
+        [self.deviceManager launchApplication:receiverAppId withLaunchOptions:[[GCKLaunchOptions alloc] initWithRelaunchIfRunning:YES]];
     }
 }
 - (void)sendMessage:(NSString *)message {
@@ -149,12 +150,19 @@ didDisconnectFromApplicationWithError:(NSError *)error {
 
 - (void)deviceManager:(GCKDeviceManager *)deviceManager
 didReceiveApplicationMetadata:(GCKApplicationMetadata *)applicationMetadata {
-    NSDictionary *data = [[NSDictionary alloc] initWithObjectsAndKeys:
-                          applicationMetadata.applicationID, @"applicationID",
-                          applicationMetadata.applicationName, @"applicationName",
-                          applicationMetadata.senderAppIdentifier, @"senderAppIdentifier",
-                          applicationMetadata.senderAppLaunchURL, @"senderAppLaunchURL", nil];
-NSLog(@"NATIVE RECEIVE APPLICATION METADATA CALLED: %@", applicationMetadata.applicationID);
+    
+    if(applicationMetadata.applicationID == (id)[NSNull null] || applicationMetadata.applicationID == 0){
+        NSLog(@"NATIVE RECEIVE NULL METADATAEVENT");
+        NSDictionary *data = [[NSDictionary alloc] initWithObjectsAndKeys:
+                              @"timeout", @"deviceEventType",
+                              applicationMetadata.applicationID, @"applicationID",
+                              applicationMetadata.applicationName, @"applicationName",
+                              applicationMetadata.senderAppIdentifier, @"senderAppIdentifier",
+                              applicationMetadata.senderAppLaunchURL, @"senderAppLaunchURL", nil];
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"deviceEvent" object:self userInfo:data];
+    } else {
+        NSLog(@"NATIVE RECEIVE METADATAEVENT WITH DATA");
+    }
 }
 
 - (void)deviceManager:(GCKDeviceManager *)deviceManager
