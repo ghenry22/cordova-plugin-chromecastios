@@ -87,9 +87,109 @@ Disconnect from Device
         //disconnect request failed
         //returns an error code
     });
+    
+Enable Passive Scanning Mode (scans less aggressively to save power)
+    //bool is a boolean stating whether to enable or disable
+    cordova.plugins.chromecastios.passiveScanForDevices(bool).then(function(reponse){
+        //successfully enabled passive scanning mode
+        //returns a boolean value representing the native frameworks current passive
+        //scanning state
+    }).catch(function(error){
+        //an error occurred with the request
+    });
 
 ### Media Control Functions
 
+Play
+    cordova.plugins.chromecastios.play();
+
+Pause
+    cordova.plugins.chromecastios.pause();
+
+Stop
+    //note stop also disconnects the media session, only use it when you are done
+    //otherwise pause and seek back to 0
+    cordova.plugins.chromecastios.stop();
+
+Seek
+    //specify the time in the current media file to seek to
+    cordova.plugins.chromecastios.seek(seekTime);
+
+getPosition
+    //get the current position of the playing media in seconds
+    cordova.plugins.chromecastios.getPosition().then(function(response){
+        var position = response
+        //do something with the position value
+    }).catch(function(error){
+        //an error occured getting the position
+        //usually when the session has timed out or no media is loaded
+    });
+
+SetVolumeForMedia
+    //set the volume on the remote device for the current media
+    //value should be between 0 & 1
+    cordova.plugins.chromecastios.setVolumeForMedia(0.5);    
+
+muteMedia
+    //Mute the current media
+    //bool is a boolean true or false
+    cordova.plugins.chromecastios.muteMedia(bool);
+
 ### Properties
+cordova.plugins.chromecastios has several properties to provide you with information
+    
+    appConnected: has an app been successfully launched and is it available
+    connected: has a device been successfully found and selected
+    connectedApp: details of the currently connected application
+    connectedDevice: details of the currently connected device
+    devices: array list of available devices on the local network
+    initComplete: has the plugin been initialised.  Should always be true
+    lastMediaStatus: the last media status update received by the plugin
+    passiveScanning: is passive scanning mode enabled
+    receiverAppId: the appID of the currently running receiver application
+    startedListening: is the app actively scanning
 
 ### Events
+cordova.plugins.chromecastios emits 2 types of events, device events and media status events
+Every event returns an event object which will have:
+event.eventType = to differentiate different event sources
+event.statusEvent = included with media status events, contains media status at time of the event
+event.deviceEvent = included with device events, contains the device object for the affected device
+    
+    document.addEventListener("chromecast-ios-media", function(event) {
+        if(event.eventType == "playbackFinished"){
+          console.log("playback finished event");
+          //do something
+        }
+        if(event.eventType == "playbackBuffering"){
+          console.log("playback paused event")
+          //do something
+        }
+        if(event.eventType == "playbackPlaying"){
+          console.log("playback playing event");
+          //do something
+        }
+        if(event.eventType == "playbackPaused"){
+          console.log("playback paused event")
+          //do something
+          }
+    });
+    
+    document.addEventListener("chromecast-ios-device", function(event) {
+        if(event.eventType == "online"){
+          console.log("device online");
+          //do something
+        }
+        if(event.eventType == "offline"){
+          console.log("device offline")
+          //do something
+        }
+        if(event.eventType == "changed"){
+          console.log("device updated");
+          //do something
+        }
+        if(event.eventType == "disconnect"){
+          console.log("device disconnected");
+          //do something
+        }
+    });
