@@ -47,18 +47,21 @@ exports.receiveDeviceEvent = function(event) {
 
     //Connection timeout
     if(_event.deviceEventType == "timeout"){
-        //Set status as disconnected
-        t.appConnected = false;
-        t.connectedApp = {};
-        t.connected = false;
-        t.connectedDevice = {};
+        //action is only required if there is a current connection
+        if(t.connected && t.appConnected){
+            //Set status as disconnected
+            t.appConnected = false;
+            t.connectedApp = {};
+            t.connected = false;
+            t.connectedDevice = {};
 
-        //Broadcast timeout event
-        var ev = document.createEvent('HTMLEvents');
-        ev.deviceEvent = _device;
-        ev.eventType = "timeout";
-        ev.initEvent('chromecast-ios-device', true, true, arguments);
-        document.dispatchEvent(ev);
+            //Broadcast timeout event
+            var ev = document.createEvent('HTMLEvents');
+            ev.deviceEvent = _device;
+            ev.eventType = "timeout";
+            ev.initEvent('chromecast-ios-device', true, true, arguments);
+            document.dispatchEvent(ev);
+        }
     }
     //Disconnected from App
     if(_event.deviceEventType == "appDisconnect"){
