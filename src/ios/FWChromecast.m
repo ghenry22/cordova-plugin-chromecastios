@@ -39,9 +39,9 @@
 }
 
 - (void)receiveDeviceEvent:(NSNotification *)notification {
-    NSDictionary *device = [notification userInfo];
+    NSDictionary *eventData = [notification userInfo];
 
-    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:device options: 0 error: nil];
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:eventData options: 0 error: nil];
     NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
     NSString *jsStatement = [NSString stringWithFormat:@"if(cordova.plugins.chromecastios)cordova.plugins.chromecastios.receiveDeviceEvent(%@);", jsonString];
 

@@ -149,12 +149,19 @@ didDisconnectFromApplicationWithError:(NSError *)error {
 
 - (void)deviceManager:(GCKDeviceManager *)deviceManager
 didReceiveApplicationMetadata:(GCKApplicationMetadata *)applicationMetadata {
-    NSDictionary *data = [[NSDictionary alloc] initWithObjectsAndKeys:
-                          applicationMetadata.applicationID, @"applicationID",
-                          applicationMetadata.applicationName, @"applicationName",
-                          applicationMetadata.senderAppIdentifier, @"senderAppIdentifier",
-                          applicationMetadata.senderAppLaunchURL, @"senderAppLaunchURL", nil];
-NSLog(@"NATIVE RECEIVE APPLICATION METADATA CALLED: %@", applicationMetadata.applicationID);
+    
+    if(applicationMetadata.applicationID == (id)[NSNull null] || applicationMetadata.applicationID == 0){
+        NSLog(@"NATIVE RECEIVE NULL METADATAEVENT");
+        NSDictionary *data = [[NSDictionary alloc] initWithObjectsAndKeys:
+                              @"timeout", @"deviceEventType",
+                              applicationMetadata.applicationID, @"applicationID",
+                              applicationMetadata.applicationName, @"applicationName",
+                              applicationMetadata.senderAppIdentifier, @"senderAppIdentifier",
+                              applicationMetadata.senderAppLaunchURL, @"senderAppLaunchURL", nil];
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"deviceEvent" object:self userInfo:data];
+    } else {
+        NSLog(@"NATIVE RECEIVE METADATAEVENT WITH DATA");
+    }
 }
 
 - (void)deviceManager:(GCKDeviceManager *)deviceManager

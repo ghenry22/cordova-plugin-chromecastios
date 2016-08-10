@@ -31,7 +31,8 @@ exports.receiveDeviceEvent = function(event) {
     var t = this;
     var _event = event;
 
-    if((_event.deviceEventType == "disconnect" || _event.deviceEventType == "appDisconnect") && t.connected){
+    //disconnect events don't pass a device object but needs one to avoid repeating code below
+    if((_event.deviceEventType == "disconnect" || _event.deviceEventType == "appDisconnect" || _event.deviceEventType == "timeout") && t.connected){
         _event.friendlyName = t.connectedDevice.friendlyName;
         _event.id = t.connectedDevice.id;
         _event.ipAddress = t.connectedDevice.ipAddress;
@@ -44,6 +45,21 @@ exports.receiveDeviceEvent = function(event) {
     _device.ipAddress = _event.ipAddress;
     _device.servicePort = _event.servicePort;
 
+    //Connection timeout
+    if(_event.deviceEventType == "timeout"){
+        //Set status as disconnected
+        t.appConnected = false;
+        t.connectedApp = {};
+        t.connected = false;
+        t.connectedDevice = {};
+
+        //Broadcast timeout event
+        var ev = document.createEvent('HTMLEvents');
+        ev.deviceEvent = _device;
+        ev.eventType = "timeout";
+        ev.initEvent('chromecast-ios-device', true, true, arguments);
+        document.dispatchEvent(ev);
+    }
     //Disconnected from App
     if(_event.deviceEventType == "appDisconnect"){
         //Set status as App disconnected
