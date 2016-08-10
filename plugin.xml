@@ -43,5 +43,8 @@
         <framework src="MediaToolbox.framework" />
         <framework src="SystemConfiguration.framework" />
         <framework src="src/ios/Frameworks/GoogleCast.framework" custom="true" />
+
+        <hook type="after_plugin_install" src="scripts/ios-install.js" />
+        <hook type="before_plugin_uninstall" src="scripts/ios-uninstall.js" />
     </platform>
 </plugin>
