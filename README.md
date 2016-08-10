@@ -89,6 +89,7 @@ Disconnect from Device
     });
     
 Enable Passive Scanning Mode (scans less aggressively to save power)
+
     //bool is a boolean stating whether to enable or disable
     cordova.plugins.chromecastios.passiveScanForDevices(bool).then(function(reponse){
         //successfully enabled passive scanning mode
@@ -101,21 +102,26 @@ Enable Passive Scanning Mode (scans less aggressively to save power)
 ### Media Control Functions
 
 Play
+
     cordova.plugins.chromecastios.play();
 
 Pause
+
     cordova.plugins.chromecastios.pause();
 
 Stop
+
     //note stop also disconnects the media session, only use it when you are done
     //otherwise pause and seek back to 0
     cordova.plugins.chromecastios.stop();
 
 Seek
-    //specify the time in the current media file to seek to
+
+    //specify the time in the current media file to seek to in seconds
     cordova.plugins.chromecastios.seek(seekTime);
 
 getPosition
+
     //get the current position of the playing media in seconds
     cordova.plugins.chromecastios.getPosition().then(function(response){
         var position = response
@@ -126,16 +132,19 @@ getPosition
     });
 
 SetVolumeForMedia
+
     //set the volume on the remote device for the current media
     //value should be between 0 & 1
     cordova.plugins.chromecastios.setVolumeForMedia(0.5);    
 
 muteMedia
+
     //Mute the current media
     //bool is a boolean true or false
     cordova.plugins.chromecastios.muteMedia(bool);
 
 ### Properties
+
 cordova.plugins.chromecastios has several properties to provide you with information
     
     appConnected: has an app been successfully launched and is it available
@@ -150,12 +159,15 @@ cordova.plugins.chromecastios has several properties to provide you with informa
     startedListening: is the app actively scanning
 
 ### Events
+
 cordova.plugins.chromecastios emits 2 types of events, device events and media status events
 Every event returns an event object which will have:
 event.eventType = to differentiate different event sources
 event.statusEvent = included with media status events, contains media status at time of the event
 event.deviceEvent = included with device events, contains the device object for the affected device
     
+Media Status Events
+
     document.addEventListener("chromecast-ios-media", function(event) {
         if(event.eventType == "playbackFinished"){
           console.log("playback finished event");
@@ -174,6 +186,8 @@ event.deviceEvent = included with device events, contains the device object for 
           //do something
           }
     });
+
+Device Status Events
     
     document.addEventListener("chromecast-ios-device", function(event) {
         if(event.eventType == "online"){
