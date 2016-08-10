@@ -1,6 +1,6 @@
 {
   "name": "ghenry22",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Cordova plugin for using Chromecast devices from iOS",
   "cordova": {
     "id": "cordova-plugin-chromecastios",
@@ -10,11 +10,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ghenry22/cordova-plugin-chromecastios.git"
+    "url": "git+https://github.com/ghenry22/cordova-plugin-chromecastios"
   },
   "keywords": [
     "ecosystem:cordova",
-    "cordova-ios"
+    "cordova-ios",
+    "chromecast",
+    "googlecast",
+    "cast"
   ],
   "engines": [
     {
