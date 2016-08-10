@@ -28,16 +28,17 @@
 }
 
 - (void)launchApplication:(NSString *)receiverAppId {
-    [self.deviceManager launchApplication:receiverAppId];
+    //Launch the application, relaunch if already running so app is always in clean state
+    [self.deviceManager launchApplication:receiverAppId withLaunchOptions:[[GCKLaunchOptions alloc] initWithRelaunchIfRunning:YES]];
 }
 
 - (void)joinApplication:(NSString *)receiverAppId {
     //check if the currently running app is actually what we want to join
-    //if it is, join it, if it is not then launch the desired app
+    //if it is, join it, if it is not then launch the desired app with relaunch
     if(receiverAppId == self.deviceManager.applicationMetadata.applicationID){
         [self.deviceManager joinApplication:receiverAppId];
     } else {
-        [self.deviceManager launchApplication:receiverAppId];
+        [self.deviceManager launchApplication:receiverAppId withLaunchOptions:[[GCKLaunchOptions alloc] initWithRelaunchIfRunning:YES]];
     }
 }
 - (void)sendMessage:(NSString *)message {
