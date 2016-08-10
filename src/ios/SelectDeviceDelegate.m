@@ -55,11 +55,11 @@
 }
 
 - (void)mute:(BOOL)mute {
-    [self.channel setStreamMuted:mute];
+    [self.deviceManager setMuted:mute];
 }
 
 - (void)setVolume:(float)volume {
-    [self.channel setStreamVolume:volume];
+    [self.deviceManager setVolume:volume];
 }
 
 #pragma mark - GCKDeviceManagerDelegate
