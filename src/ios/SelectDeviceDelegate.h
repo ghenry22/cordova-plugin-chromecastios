@@ -22,6 +22,8 @@
 - (void)sendMessage:(NSString*)message;
 - (void)addChannel:(GCKCastChannel*)channel;
 - (void)disconnect;
+- (void)setVolume:(float)volume;
+- (void)seek:(NSTimeInterval)time;
 @property(nonatomic, strong) GCKDeviceManager* deviceManager;
 @property(nonatomic, strong) DeviceTextChannel* textChannel;
 @property(nonatomic, strong) GCKDevice *device;

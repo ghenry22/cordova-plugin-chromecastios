@@ -215,20 +215,20 @@
 
 - (void)muteMedia:(CDVInvokedUrlCommand*)command {
     bool mute = [[command.arguments objectAtIndex:0] boolValue];
-    if(self.mediaChannelDelegate == nil) {
+    if(self.selectDeviceDelegate == nil || self.mediaChannelDelegate == nil) {
         CDVPluginResult*pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_INVALID_ACTION messageAsString:@"In order to mute a media item you need to load it first."];
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
     }
-    [self.mediaChannelDelegate mute:mute];
+    [self.selectDeviceDelegate mute:mute];
 }
 
 - (void)setVolumeForMedia:(CDVInvokedUrlCommand*)command {
     float volume = [[command.arguments objectAtIndex:0] floatValue];
-    if(self.mediaChannelDelegate == nil) {
-        CDVPluginResult*pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_INVALID_ACTION messageAsString:@"In order to set the volume you need to load it first."];
+    if(self.selectDeviceDelegate == nil || self.mediaChannelDelegate == nil) {
+        CDVPluginResult*pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_INVALID_ACTION messageAsString:@"In order to set the volume for media you need to load it first."];
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
     }
-    [self.mediaChannelDelegate setVolume:volume];
+    [self.selectDeviceDelegate setVolume:volume];
 }
 
 - (void)seekMedia:(CDVInvokedUrlCommand*)command {

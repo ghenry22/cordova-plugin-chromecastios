@@ -20,8 +20,8 @@
 - (void)play;
 - (void)pause;
 - (void)stop;
-- (void)mute:(BOOL)mute;
-- (void)setVolume:(float)volume;
+// - (void)mute:(BOOL)mute;
+// - (void)setVolume:(float)volume;
 - (void)seek:(NSTimeInterval)time;
 - (float)position;
 - (NSInteger)status;

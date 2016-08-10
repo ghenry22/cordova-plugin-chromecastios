@@ -54,6 +54,14 @@
     [self.deviceManager addChannel:channel];
 }
 
+- (void)mute:(BOOL)mute {
+    [self.channel setStreamMuted:mute];
+}
+
+- (void)setVolume:(float)volume {
+    [self.channel setStreamVolume:volume];
+}
+
 #pragma mark - GCKDeviceManagerDelegate
 
 // [START select device]
@@ -152,7 +160,7 @@ didDisconnectFromApplicationWithError:(NSError *)error {
 didReceiveApplicationMetadata:(GCKApplicationMetadata *)applicationMetadata {
     
     if(applicationMetadata.applicationID == (id)[NSNull null] || applicationMetadata.applicationID == 0){
-        NSLog(@"NATIVE RECEIVE NULL METADATAEVENT");
+        //NSLog(@"NATIVE RECEIVE NULL METADATAEVENT");
         NSDictionary *data = [[NSDictionary alloc] initWithObjectsAndKeys:
                               @"timeout", @"deviceEventType",
                               applicationMetadata.applicationID, @"applicationID",
@@ -161,13 +169,23 @@ didReceiveApplicationMetadata:(GCKApplicationMetadata *)applicationMetadata {
                               applicationMetadata.senderAppLaunchURL, @"senderAppLaunchURL", nil];
         [[NSNotificationCenter defaultCenter] postNotificationName:@"deviceEvent" object:self userInfo:data];
     } else {
-        NSLog(@"NATIVE RECEIVE METADATAEVENT WITH DATA");
+        //NSLog(@"NATIVE RECEIVE METADATAEVENT WITH DATA");
     }
 }
 
 - (void)deviceManager:(GCKDeviceManager *)deviceManager
 didReceiveApplicationStatusText:(NSString *)applicationStatusText {
-    NSLog(@"NATIVE DID RECEIVE APPLICATION STATUS TEXT: %@", applicationStatusText);
+    //NSLog(@"NATIVE DID RECEIVE APPLICATION STATUS TEXT: %@", applicationStatusText);
+}
+
+- (void)deviceManager:(GCKDeviceManager *)deviceManager
+volumeDidChangeToLevel:(float)volumeLevel isMuted:(BOOL)isMuted {
+
+    NSDictionary *data = [[NSDictionary alloc] initWithObjectsAndKeys:
+                          @"volumeChanged", @"statusEventType",
+                          volumeLevel, @"volumeLevel",
+                          isMuted, @"isMuted", nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"volumeEvent" object:self userInfo:data];
 }
 // [END select device]
 @end
