@@ -148,14 +148,18 @@ didDisconnectFromApplicationWithError:(NSError *)error {
 }
 
 - (void)deviceManager:(GCKDeviceManager *)deviceManager
-didReceiveStatusForApplication:(GCKApplicationMetadata *)applicationMetadata {
-    // NSDictionary *data = [[NSDictionary alloc] initWithObjectsAndKeys:
-    //                       applicationMetadata.applicationID, @"applicationID",
-    //                       applicationMetadata.applicationName, @"applicationName",
-    //                       applicationMetadata.senderAppIdentifier, @"senderAppIdentifier",
-    //                       applicationMetadata.senderAppLaunchURL, @"senderAppLaunchURL", nil];
-NSLog(@"this never gets called, callback is not valid");
+didReceiveApplicationMetadata:(GCKApplicationMetadata *)applicationMetadata {
+    NSDictionary *data = [[NSDictionary alloc] initWithObjectsAndKeys:
+                          applicationMetadata.applicationID, @"applicationID",
+                          applicationMetadata.applicationName, @"applicationName",
+                          applicationMetadata.senderAppIdentifier, @"senderAppIdentifier",
+                          applicationMetadata.senderAppLaunchURL, @"senderAppLaunchURL", nil];
+NSLog(@"NATIVE RECEIVE APPLICATION METADATA CALLED: %@", applicationMetadata.applicationID);
+}
 
+- (void)deviceManager:(GCKDeviceManager *)deviceManager
+didReceiveApplicationStatusText:(NSString *)applicationStatusText {
+    NSLog(@"NATIVE DID RECEIVE APPLICATION STATUS TEXT: %@", applicationStatusText);
 }
 // [END select device]
 @end
