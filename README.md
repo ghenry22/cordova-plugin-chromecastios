@@ -9,7 +9,11 @@ Currently only accomodates specifying generic media metadata but otherwise is fu
 
 ## Install
 
+    //Latest from github master
     cordova plugin add https://github.com/ghenry22/cordova-plugin-chromecastios.git
+    
+    //latest published release from npm
+    cordova plugin add cordova-plugin-chromecastios
 
 ## Usage
 
