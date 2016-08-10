@@ -1,5 +1,5 @@
 {
-  "name": "ghenry22",
+  "name": "cordova-plugin-chromecastios",
   "version": "1.0.1",
   "description": "Cordova plugin for using Chromecast devices from iOS",
   "cordova": {
