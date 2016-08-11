@@ -163,6 +163,8 @@ cordova.plugins.chromecastios has several properties to provide you with informa
     passiveScanning: is passive scanning mode enabled
     receiverAppId: the appID of the currently running receiver application
     startedListening: is the app actively scanning
+    volume.level: the current app volume level (value between 0 & 1)
+    volume.isMuted: the mute status of the app volume (0 = not muted, 1 = muted);
 
 ### Events
 
@@ -170,7 +172,7 @@ cordova.plugins.chromecastios emits 3 types of events, device events, media stat
 
 Every event returns an event object which will have:
 
-event.eventType = to differentiate different event sources
+event.eventType: to differentiate different event actions, included with all events
 
 event.statusEvent: included with media status events, contains media status at time of the event
 
