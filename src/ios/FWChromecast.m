@@ -25,8 +25,19 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(receiveVolumeEvent:) name:@"volumeEvent" object:nil];
 }
 
-- (void)receiveVolumeEvent:(NSNotification *)notification {
-  NSLog(@"Need to debounce this probably");
+- (void)receiveVolumeEvent:(NSNotification *)notification {   
+    NSDictionary *eventData = [notification userInfo];
+    
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:eventData options: 0 error: nil];
+    NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+    NSString *jsStatement = [NSString stringWithFormat:@"if(cordova.plugins.chromecastios)cordova.plugins.chromecastios.receiveVolumeEvent(%@);", jsonString];
+    
+#ifdef __CORDOVA_4_0_0
+    [self.webViewEngine evaluateJavaScript:jsStatement completionHandler:nil];
+#else
+    [self.webView stringByEvaluatingJavaScriptFromString:jsStatement];
+#endif
+  
 }
 
 - (void)receiveStatusEvent:(NSNotification *)notification {

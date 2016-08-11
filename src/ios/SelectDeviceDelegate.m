@@ -184,7 +184,7 @@ volumeDidChangeToLevel:(float)volumeLevel isMuted:(BOOL)isMuted {
     NSDictionary *data = [[NSDictionary alloc] initWithObjectsAndKeys:
                           @"volumeChanged", @"statusEventType",
                           [[NSNumber alloc] initWithFloat:volumeLevel], @"volumeLevel",
-                          isMuted, @"isMuted", nil];
+                          [[NSNumber alloc] initWithInt:isMuted], @"isMuted", nil];
     [[NSNotificationCenter defaultCenter] postNotificationName:@"volumeEvent" object:self userInfo:data];
 }
 // [END select device]
