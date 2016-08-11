@@ -42,7 +42,7 @@
     }
 }
 - (void)sendMessage:(NSString *)message {
-    [self.textChannel sendTextMessage:message];
+    [self.textChannel sendTextMessage:message error:nil];
 }
 
 - (void)disconnect {
