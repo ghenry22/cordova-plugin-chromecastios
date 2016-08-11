@@ -22,6 +22,51 @@ exports.receiveSessionEvent = function(event) {
     }
 };
 
+
+/**
+ * Receive application level volume change events (includes mute change)
+ * Add eventType and eventStatus to the event object
+ * Emit events for the user app to consume
+ */
+exports.receiveVolumeEvent = function(event) {
+    var t = this;
+    var _event = event;
+
+    if(t.volume.level != _event.volumeLevel){
+        //Update volume level
+        t.volume.level = _event.volumeLevel;
+
+        //Broadcast volume event
+        var ev = document.createEvent('HTMLEvents');
+        ev.volumeEvent = _event;
+        ev.eventType = "volumeChanged";
+        ev.initEvent('chromecast-ios-volume', true, true, arguments);
+        document.dispatchEvent(ev);
+    }
+    if(t.volume.isMuted && !_event.isMuted){
+        //Update mute status
+        t.volume.isMuted = _event.isMuted;
+
+        //Broadcast mute enabled event
+        var ev = document.createEvent('HTMLEvents');
+        ev.volumeEvent = _event;
+        ev.eventType = "volumeMuted";
+        ev.initEvent('chromecast-ios-volume', true, true, arguments);
+        document.dispatchEvent(ev);        
+    }
+    if(!t.volume.isMuted && _event.isMuted){
+        //Update mute status
+        t.volume.isMuted = _event.isMuted;
+
+        //Broadcast muted disabled event
+        var ev = document.createEvent('HTMLEvents');
+        ev.volumeEvent = _event;
+        ev.eventType = "volumeUnmuted";
+        ev.initEvent('chromecast-ios-volume', true, true, arguments);
+        document.dispatchEvent(ev);        
+    }
+};
+
 /**
  * Receive device availability updates from the native iOS cast library
  * Add eventType and eventStatus to the event object
@@ -246,6 +291,10 @@ exports.init = function (){
         t.connected = false;
         t.appConnected = false;
         t.connectedApp = {};
+        //track app volume and mute status
+        t.volume = {}
+        t.volume.level = 1;
+        t.volume.isMuted = 0;
         //set initComplete to true
         t.initComplete = true;
         return true;

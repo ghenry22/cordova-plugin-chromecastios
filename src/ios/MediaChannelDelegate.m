@@ -41,13 +41,13 @@ static NSString *const kIsMuted = @"isMuted";
     [self.channel stop];
 }
 
-- (void)mute:(BOOL)mute {
-    [self.channel setStreamMuted:mute];
-}
+//- (void)mute:(BOOL)mute {
+//    [self.channel setStreamMuted:mute];
+//}
 
-- (void)setVolume:(float)volume {
-    [self.channel setStreamVolume:volume];
-}
+//- (void)setVolume:(float)volume {
+//    [self.channel setStreamVolume:volume];
+//}
 
 - (void)seek:(NSTimeInterval)time {
     [self.channel seekToTimeInterval:time];

@@ -22,6 +22,22 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(receiveStatusEvent:) name:@"statusEvent" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(receiveDeviceEvent:) name:@"deviceEvent" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(receiveDisconnectEvent:) name:@"disconnectEvent" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(receiveVolumeEvent:) name:@"volumeEvent" object:nil];
+}
+
+- (void)receiveVolumeEvent:(NSNotification *)notification {   
+    NSDictionary *eventData = [notification userInfo];
+    
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:eventData options: 0 error: nil];
+    NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+    NSString *jsStatement = [NSString stringWithFormat:@"if(cordova.plugins.chromecastios)cordova.plugins.chromecastios.receiveVolumeEvent(%@);", jsonString];
+    
+#ifdef __CORDOVA_4_0_0
+    [self.webViewEngine evaluateJavaScript:jsStatement completionHandler:nil];
+#else
+    [self.webView stringByEvaluatingJavaScriptFromString:jsStatement];
+#endif
+  
 }
 
 - (void)receiveStatusEvent:(NSNotification *)notification {
@@ -215,20 +231,20 @@
 
 - (void)muteMedia:(CDVInvokedUrlCommand*)command {
     bool mute = [[command.arguments objectAtIndex:0] boolValue];
-    if(self.mediaChannelDelegate == nil) {
+    if(self.selectDeviceDelegate == nil || self.mediaChannelDelegate == nil) {
         CDVPluginResult*pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_INVALID_ACTION messageAsString:@"In order to mute a media item you need to load it first."];
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
     }
-    [self.mediaChannelDelegate mute:mute];
+    [self.selectDeviceDelegate mute:mute];
 }
 
 - (void)setVolumeForMedia:(CDVInvokedUrlCommand*)command {
     float volume = [[command.arguments objectAtIndex:0] floatValue];
-    if(self.mediaChannelDelegate == nil) {
-        CDVPluginResult*pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_INVALID_ACTION messageAsString:@"In order to set the volume you need to load it first."];
+    if(self.selectDeviceDelegate == nil || self.mediaChannelDelegate == nil) {
+        CDVPluginResult*pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_INVALID_ACTION messageAsString:@"In order to set the volume for media you need to load it first."];
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
     }
-    [self.mediaChannelDelegate setVolume:volume];
+    [self.selectDeviceDelegate setVolume:volume];
 }
 
 - (void)seekMedia:(CDVInvokedUrlCommand*)command {
@@ -279,6 +295,8 @@
 -(void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"statusEvent" object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"deviceEvent" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"disconnectEvent" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"volumeEvent" object:nil];
 }
 
 @end

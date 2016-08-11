@@ -17,6 +17,9 @@
 @interface FWChromecast : CDVPlugin
 
 - (void)receiveStatusEvent:(NSNotification *)notification;
+- (void)receiveDeviceEvent:(NSNotification *)notification;
+- (void)receiveVolumeEvent:(NSNotification *)notification;
+- (void)receiveDisconnectEvent:(NSNotification *)notification;
 - (void)scanForDevices:(CDVInvokedUrlCommand*)command;
 - (void)stopScanForDevices:(CDVInvokedUrlCommand*)command;
 - (void)enablePassiveScan:(CDVInvokedUrlCommand*)command;
