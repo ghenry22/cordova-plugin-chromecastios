@@ -177,32 +177,84 @@
 
 - (void)loadMedia:(CDVInvokedUrlCommand*)command {
 
+    //check that there is a valid media channel
     if(self.mediaChannelDelegate == nil) {
         [self startMediaChannel:command];
     }
+    //check that the channel is connected
     if([self.mediaChannelDelegate status] == 0){
         NSLog(@"no media channel available, start media channel");
         [self startMediaChannel:command];
     }
-
+    //register callbackID with the delegate
     [self.mediaChannelDelegate registerCallbackId:command.callbackId];
 
-    NSString *title = [command.arguments objectAtIndex:0];
-    NSString *mediaUrl = [command.arguments objectAtIndex:1];
-    NSString *contentType = [command.arguments objectAtIndex:2];
-    NSString *subtitle = [command.arguments objectAtIndex:3];
+    //capture args passed from javascript
+    NSString *mediaUrl = [command.arguments objectAtIndex:0];
+    NSString *contentType = [command.arguments objectAtIndex:1];
+    NSInteger metadataType = [(NSNumber *)[command.arguments objectAtIndex:2] integerValue];
+    NSInteger streamType = [(NSNumber *)[command.arguments objectAtIndex:3] integerValue];
+    
+    //default the streamtype to buffered
+    GCKMediaStreamType gckStreamType = GCKMediaStreamTypeBuffered;
+    
+    //update the streamtype if user specified otherwise
+    if(streamType == 0){
+        gckStreamType = GCKMediaStreamTypeNone;
+    }
+    if(streamType == 2){
+        gckStreamType = GCKMediaStreamTypeLive;
+    }
+    if(streamType == 99){
+        gckStreamType = GCKMediaStreamTypeUnknown;
+    }
+        
+    //handle generic media metadata
+    if(metadataType == 0){
+        NSLog(@"generic metadata type");
+        //init a metadata object with type generic
+        GCKMediaMetadata *metadata = [[GCKMediaMetadata alloc] init];
 
-    GCKMediaMetadata *metadata = [[GCKMediaMetadata alloc] init];
-    [metadata setString:title forKey:kGCKMetadataKeyTitle];
-    [metadata setString:subtitle forKey:kGCKMetadataKeySubtitle];
+        //Title is a required parameter so no need to test for null
+        [metadata setString:[command.arguments objectAtIndex:4] forKey:kGCKMetadataKeyTitle];
+        
+        //If subtitle is not null add to metadata
+        if([command.arguments objectAtIndex:5] != (id)[NSNull null]){
+            [metadata setString:[command.arguments objectAtIndex:5] forKey:kGCKMetadataKeySubtitle];
+        }
+        //If image is not null add to metadata
+        if([command.arguments objectAtIndex:6] != (id)[NSNull null]){
+            NSURL *imageUrl = [NSURL URLWithString:[command.arguments objectAtIndex:6]];
+            //TODO test out some different image sizes to see the effects and either make dynamic or document
+            GCKImage *image = [[GCKImage alloc] initWithURL:imageUrl width:500 height:500];
+            [metadata addImage:image];
+        }
 
-    [self.mediaChannelDelegate loadMedia: [[GCKMediaInformation alloc]
-                                           initWithContentID:mediaUrl
-                                           streamType:GCKMediaStreamTypeNone
-                                           contentType:contentType
-                                           metadata:metadata
-                                           streamDuration:0
-                                           customData:nil]];
+        //load the media with metadata
+        [self.mediaChannelDelegate loadMedia: [[GCKMediaInformation alloc]
+                                               initWithContentID:mediaUrl
+                                               streamType:gckStreamType
+                                               contentType:contentType
+                                               metadata:metadata
+                                               streamDuration:0
+                                               customData:nil]];
+    }
+    //handle movie media metadata
+    if(metadataType == 1){
+        NSLog(@"movie metadata type");
+    }
+    //handle tv show media metadata
+    if(metadataType == 2){
+        NSLog(@"tvshow metadata type");
+    }
+    //handle music track media metadata
+    if(metadataType == 3){
+        NSLog(@"musicTrack metadata type");
+    }
+    //handle photo media metadata
+    if(metadataType == 4){
+        NSLog(@"photo metadata type");
+    }
 }
 
 - (void)playMedia:(CDVInvokedUrlCommand*)command {

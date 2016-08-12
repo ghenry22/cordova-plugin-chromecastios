@@ -525,7 +525,7 @@ exports.startMediaChannel = function () {
  * @param mediaType, mediaType (e.g. "video/mp4")
  * @param subtitle to display
  */
-exports.loadMedia = function (title, mediaUrl, mediaType, subtitle) {
+exports.loadMedia2 = function (title, mediaUrl, mediaType, subtitle) {
     var t = this;
     return new Promise(function(resolve, reject){
 
@@ -536,6 +536,114 @@ exports.loadMedia = function (title, mediaUrl, mediaType, subtitle) {
             var _error = error;
             reject(_error);
         }, "FWChromecast", "loadMedia", [title, mediaUrl, mediaType, subtitle]);
+    })
+};
+
+/**
+ * Load a media item on the default media channel.
+ *
+ * @param mediaUrl, absolute url to the media item
+ * @param mediaType, mediaType (e.g. "video/mp4")
+ * @param metadataType, integer value where 0=generic, 1=movie, 2=tvshow, 3=musicTrack, 4=photo
+ * @param metadata, object containing required metadata, metadata.title is required, others are optional
+ * @param streamType, integer value where 0=none, 1=buffered, 2=live, 99=unknown. defaults to buffered
+ *  change to live for live streams, otherwise buffered should be sufficient
+ */
+exports.loadMedia = function (mediaUrl, mediaType, metadataType, metadata, streamType) {
+    var t = this;
+    var _args = [];
+    var _streamType = 1;
+
+    if(mediaUrl == undefined || mediaType == undefined || metadataType == undefined || metadata == undefined){
+        Promise.reject("missing parameters");
+    }
+
+    if(streamType != undefined){
+        _streamType = streamType;
+    }
+
+    //Assign common values
+    _args[0] = mediaUrl;
+    _args[1] = mediaType;
+    _args[2] = metadataType;
+    _args[3] = _streamType;
+
+    //generic metadata
+    if(metadataType == 0){
+
+        //reject if metadata missing
+        if(metadata.title == undefined){
+            Promise.reject("missing required metadata for type generic");
+        }
+        //assign metadata to args
+        _args[4] = metadata.title;
+        _args[5] = metadata.subtitle;
+        _args[6] = metadata.image;
+    }
+
+    //movie metadata
+    if(metadataType == 1){
+        //reject if metadata missing
+        if(metadata.title == undefined){
+            Promise.reject("missing required metadata for type movie");
+        }
+        //assign metadata to args
+        _args[4] = metadata.title;
+        _args[5] = metadata.subtitle;
+        _args[6] = metadata.image;
+
+        _args[7] = metadata.releaseDate;
+        _args[8] = metadata.studio;
+    }
+    //tv show metadata
+    if(metadataType == 2){
+        //reject if metadata missing
+        if(metadata.title == undefined){
+            Promise.reject("missing required metadata for type movie");
+        }
+        //assign metadata to args
+        _args[4] = metadata.title;
+        _args[5] = metadata.seriesTitle;
+        _args[6] = metadata.image;
+        _args[7] = metadata.seasonNumber;
+        _args[8] = metadata.episodeNumber;
+        _args[9] = metadata.releaseDate;
+    }
+    //musictrack metadata
+    if(metadataType == 3){
+        //reject if metadata missing
+        if(metadata.title == undefined){
+            Promise.reject("missing required metadata for type movie");
+        }
+        //assign metadata to args
+        _args[4] = metadata.title;
+        _args[5] = metadata.albumTitle;
+        _args[6] = metadata.image;
+        _args[7] = metadata.artist;
+        _args[8] = metadata.albumArtist;
+        _args[9] = metadata.trackNumber;
+    }
+    //photo metadata
+    if(metadataType == 4){
+        //reject if metadata missing
+        if(metadata.title == undefined){
+            Promise.reject("missing required metadata for type movie");
+        }
+        //assign metadata to args
+        _args[4] = metadata.title;
+        _args[5] = metadata.locationName;
+        _args[6] = metadata.artist;
+    }
+
+    return new Promise(function(resolve, reject){
+
+        cordova.exec(function(response){
+            var _response = response;
+            resolve(_response);
+        }, function(error){
+            var _error = error;
+            reject(_error);
+        }, "FWChromecast", "loadMedia", _args);
     })
 };
 
