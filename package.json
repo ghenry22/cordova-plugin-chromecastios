@@ -1,6 +1,6 @@
 {
   "name": "cordova-plugin-chromecastios",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Cordova plugin for using Chromecast devices from iOS",
   "cordova": {
     "id": "cordova-plugin-chromecastios",
