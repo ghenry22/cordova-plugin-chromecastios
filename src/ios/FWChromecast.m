@@ -320,7 +320,8 @@
     }
     //handle music track media metadata
     if(metadataType == 3){
-        NSLog(@"musicTrack metadata type");
+        //NSLog(@"musicTrack metadata type");
+
         //init a metadata object with type movie
         GCKMediaMetadata *metadata = [[GCKMediaMetadata alloc] initWithMetadataType:GCKMediaMetadataTypeMusicTrack];
         
@@ -361,7 +362,8 @@
     }
     //handle photo media metadata
     if(metadataType == 4){
-        NSLog(@"photo metadata type");
+        //NSLog(@"photo metadata type");
+        
         //init a metadata object with type movie
         GCKMediaMetadata *metadata = [[GCKMediaMetadata alloc] initWithMetadataType:GCKMediaMetadataTypePhoto];
         
