@@ -19,6 +19,51 @@ For most events where we care about the device response the plugin implements Pr
 
 ## Usage
 
+### Metadata Object Values
+
+Chromecast devices support multiple types of pre-defined media, for which different metadata can be supplied and displayed / played on the device.  The loadMedia method requires you to choose the metadataType for your media and that you provide a metadata object with values to be used.  The only required value is title.  TO create an appropriate metadata object follow this guide:
+
+    var metadata = {};
+
+Generic media metadata:
+
+    metadata.title: (string) Title of media
+    metadata.subtitle: (string); Subtitle of media
+    metadata.image: (string) url to image
+
+Movie Media metadata:
+
+    metadata.title: (string) Title of media
+    metadata.subtitle: (string); Subtitle of media
+    metadata.image: (string) url to image
+    metadata.releaseDate: (string) either YYYYMMDD or YYYY
+    metadata.studio: (string) name of the studio
+
+TV Show media metadata:
+
+    metadata.title: (string) Title of TV Episode
+    metadata.seriestitle: (string); Title of the TV Series
+    metadata.image: (string) url to image
+    metadata.releaseDate: (string) either YYYYMMDD or YYYY
+    metadata.episodeNumber: (int) number of the episode
+    metadata.seasonNumber: (int) number of the season
+
+Music track media metadata:
+
+    metadata.title: (string) Title of track
+    metadata.albumtitle: (string); Title of the album
+    metadata.image: (string) url to image
+    metadata.artist: (string) Name of the artist
+    metadata.albumArtist: (string) name of the album artist (ie "various artists" or just = artist)
+    metadata.trackNumber: (int) track number on the album
+
+Photo media metadata:
+
+    metadata.title: (string) Title of the image
+    metadata.locationName: (string) location shown in the image or where taken
+    metadata.artist: (string) name of the photographer or author
+
+
 ### Device Discovery & Control Functions
 
 Get the default cast receiver application ID
@@ -67,15 +112,19 @@ Launch Application on Device
 Load Media on Device
 
     //Start playing media on the device
-    //currently supports video or audio
-    //currently only supports generic metadata type on the chromecast
+    //supports video, audio & photo media
+    //supports chromecast media types, generic, movie, tvshow, musictrack, photo
     
-    //@param (string): title - title to display for the media item
-    //@param (string): mediaUrl - url to access the media
-    //@param (string): mediaType - mime time for the media item (ie audio/mpeg for mp3)
-    //@param (string): subtitle - a subtitle that displays in smaller font under the title
+    //@param mediaUrl, absolute url to the media item
+    //@param mediaType, mediaType (e.g. "video/mp4")
+    //@param metadataType, integer value where 0=generic, 1=movie, 2=tvshow, 3=musicTrack, 4=photo
+    //@param metadata, object containing required metadata, metadata.title is required, others are optional
+    //@param streamType, integer value where 0=none, 1=buffered, 2=live, 99=unknown. defaults to buffered
+    //change to live for live streams, if not specified will default to bufferered
+ 
+    //note: see metadata object structure notes for valid options
     
-    cordova.plugins.chromecastios.loadMedia(title, mediaUrl, mediaType, subtitle).then(function(response){
+    cordova.plugins.chromecastios.loadMedia(mediaUrl, mediaType, metadataType, metadata, streamType).then(function(response){
         //successfully loaded media on the device
         //returns a media Status object on success
     }).catch(function(error){
