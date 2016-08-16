@@ -551,11 +551,15 @@ exports.startMediaChannel = function () {
  * @param metadata, object containing required metadata, metadata.title is required, others are optional
  * @param streamType, integer value where 0=none, 1=buffered, 2=live, 99=unknown. defaults to buffered
  *  change to live for live streams, otherwise buffered should be sufficient
+ *
+ * note: releaseDate should be submitted as a String YYYYMMDD.  If month and day are not relevant set them to 01.
+ *
  */
 exports.loadMedia = function (mediaUrl, mediaType, metadataType, metadata, streamType) {
     var t = this;
     var _args = [];
     var _streamType = 1;
+    var _iso8601ReleaseDate = "";
 
     if(mediaUrl == undefined || mediaType == undefined || metadataType == undefined || metadata == undefined){
         Promise.reject("missing parameters");
@@ -563,6 +567,33 @@ exports.loadMedia = function (mediaUrl, mediaType, metadataType, metadata, strea
 
     if(streamType != undefined){
         _streamType = streamType;
+    }
+
+    //check if a releaseDate has been provided
+    if(metadata.releaseDate != undefined){
+        var _inputLength = metadata.releaseDate.length;
+
+        //ignore incomplete release date
+        if(_inputLength < 4){
+            _iso8601ReleaseDate = undefined;
+        }else{
+            //handle a full releaseDate
+            if(_inputLength == 8){
+                var _year = metadata.releaseDate.substring(0,4);
+                var _month = metadata.releaseDate.substring(4,6);
+                var _day = metadata.releaseDate.substring(6,8);
+                var _date = new Date(_year, _month, _day, "00");
+                _iso8601ReleaseDate = _date.toISOString();
+            //handle year only release date
+            } else if(_inputLength == 4){
+                var _year = metadata.releaseDate.substring(0,4);
+                var _date = new Date(_year, "00", "00", "00");
+                _iso8601ReleaseDate = _date.toISOString();
+            //handle any other scenario of incorrect or incomplete data
+            } else {
+                _iso8601ReleaseDate = undefined;
+            }
+        }
     }
 
     //Assign common values
@@ -595,8 +626,7 @@ exports.loadMedia = function (mediaUrl, mediaType, metadataType, metadata, strea
         _args[4] = metadata.title;
         _args[5] = metadata.subtitle;
         _args[6] = metadata.image;
-
-        _args[7] = metadata.releaseDate;
+        _args[7] = _iso8601ReleaseDate;
         _args[8] = metadata.studio;
     }
     //tv show metadata
@@ -610,7 +640,7 @@ exports.loadMedia = function (mediaUrl, mediaType, metadataType, metadata, strea
         _args[4] = metadata.title;
         _args[5] = metadata.seriesTitle;
         _args[6] = metadata.image;
-        _args[7] = metadata.releaseDate;
+        _args[7] = _iso8601ReleaseDate;
         _args[8] = metadata.episodeNumber;
         _args[9] = metadata.seasonNumber;
     }
@@ -631,7 +661,7 @@ exports.loadMedia = function (mediaUrl, mediaType, metadataType, metadata, strea
     }
     //photo metadata
     if(metadataType == 4){
-        
+
         //reject if metadata missing
         if(metadata.title == undefined){
             Promise.reject("metadata title is required for photo media");
