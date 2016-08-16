@@ -179,6 +179,7 @@
 
     //check that there is a valid media channel
     if(self.mediaChannelDelegate == nil) {
+        NSLog(@"no media channel available, start media channel");
         [self startMediaChannel:command];
     }
     //check that the channel is connected
@@ -211,7 +212,8 @@
         
     //handle generic media metadata
     if(metadataType == 0){
-        NSLog(@"generic metadata type");
+        //NSLog(@"generic metadata type");
+
         //init a metadata object with type generic
         GCKMediaMetadata *metadata = [[GCKMediaMetadata alloc] init];
 
@@ -225,11 +227,9 @@
         //If image is not null add to metadata
         if([command.arguments objectAtIndex:6] != (id)[NSNull null]){
             NSURL *imageUrl = [NSURL URLWithString:[command.arguments objectAtIndex:6]];
-            //TODO test out some different image sizes to see the effects and either make dynamic or document
             GCKImage *image = [[GCKImage alloc] initWithURL:imageUrl width:500 height:500];
             [metadata addImage:image];
         }
-
         //load the media with metadata
         [self.mediaChannelDelegate loadMedia: [[GCKMediaInformation alloc]
                                                initWithContentID:mediaUrl
@@ -241,19 +241,149 @@
     }
     //handle movie media metadata
     if(metadataType == 1){
-        NSLog(@"movie metadata type");
+        //NSLog(@"movie metadata type");
+
+        //init a metadata object with type movie
+        GCKMediaMetadata *metadata = [[GCKMediaMetadata alloc] initWithMetadataType:GCKMediaMetadataTypeMovie];
+        
+        //Title is a required parameter so no need to test for null
+        [metadata setString:[command.arguments objectAtIndex:4] forKey:kGCKMetadataKeyTitle];
+        
+        //If subtitle is not null add to metadata
+        if([command.arguments objectAtIndex:5] != (id)[NSNull null]){
+            [metadata setString:[command.arguments objectAtIndex:5] forKey:kGCKMetadataKeySubtitle];
+        }
+        //If image is not null add to metadata
+        if([command.arguments objectAtIndex:6] != (id)[NSNull null]){
+            NSURL *imageUrl = [NSURL URLWithString:[command.arguments objectAtIndex:6]];
+            GCKImage *image = [[GCKImage alloc] initWithURL:imageUrl width:500 height:500];
+            [metadata addImage:image];
+        }
+        //If releaseDate is not null add to metadata
+        if([command.arguments objectAtIndex:7] != (id)[NSNull null]){
+            //TODO handle date time, have to define what is passed in from JS first
+        }
+        //If Studio is not null add to metadata
+        if([command.arguments objectAtIndex:8] != (id)[NSNull null]){
+            [metadata setString:[command.arguments objectAtIndex:8] forKey:kGCKMetadataKeyStudio];
+        }
+        //load the media with metadata
+        [self.mediaChannelDelegate loadMedia: [[GCKMediaInformation alloc]
+                                               initWithContentID:mediaUrl
+                                               streamType:gckStreamType
+                                               contentType:contentType
+                                               metadata:metadata
+                                               streamDuration:0
+                                               customData:nil]];
     }
     //handle tv show media metadata
     if(metadataType == 2){
-        NSLog(@"tvshow metadata type");
+        //NSLog(@"tvshow metadata type");
+
+        //init a metadata object with type movie
+        GCKMediaMetadata *metadata = [[GCKMediaMetadata alloc] initWithMetadataType:GCKMediaMetadataTypeTVShow];
+        
+        //Title is a required parameter so no need to test for null
+        [metadata setString:[command.arguments objectAtIndex:4] forKey:kGCKMetadataKeyTitle];
+        
+        //If seriesTitle is not null add to metadata
+        if([command.arguments objectAtIndex:5] != (id)[NSNull null]){
+            [metadata setString:[command.arguments objectAtIndex:5] forKey:kGCKMetadataKeySeriesTitle];
+        }
+        //If image is not null add to metadata
+        if([command.arguments objectAtIndex:6] != (id)[NSNull null]){
+            NSURL *imageUrl = [NSURL URLWithString:[command.arguments objectAtIndex:6]];
+            //TODO test out some different image sizes to see the effects and either make dynamic or document
+            GCKImage *image = [[GCKImage alloc] initWithURL:imageUrl width:500 height:500];
+            [metadata addImage:image];
+        }
+        //If releaseDate is not null add to metadata
+        if([command.arguments objectAtIndex:7] != (id)[NSNull null]){
+            //TODO handle date time, have to define what is passed in from JS first
+        }
+        //If episodeNumber is not null add to metadata
+        if([command.arguments objectAtIndex:8] != (id)[NSNull null]){
+            [metadata setInteger:[(NSNumber *)[command.arguments objectAtIndex:8] integerValue] forKey:kGCKMetadataKeyEpisodeNumber];
+        }
+        //If seasonNumber is not null add to metadata
+        if([command.arguments objectAtIndex:9] != (id)[NSNull null]){
+            [metadata setInteger:[(NSNumber *)[command.arguments objectAtIndex:9] integerValue] forKey:kGCKMetadataKeySeasonNumber];
+        }
+        //load the media with metadata
+        [self.mediaChannelDelegate loadMedia: [[GCKMediaInformation alloc]
+                                               initWithContentID:mediaUrl
+                                               streamType:gckStreamType
+                                               contentType:contentType
+                                               metadata:metadata
+                                               streamDuration:0
+                                               customData:nil]];
     }
     //handle music track media metadata
     if(metadataType == 3){
         NSLog(@"musicTrack metadata type");
+        //init a metadata object with type movie
+        GCKMediaMetadata *metadata = [[GCKMediaMetadata alloc] initWithMetadataType:GCKMediaMetadataTypeMusicTrack];
+        
+        //Title is a required parameter so no need to test for null
+        [metadata setString:[command.arguments objectAtIndex:4] forKey:kGCKMetadataKeyTitle];
+        
+        //If albumTitle is not null add to metadata
+        if([command.arguments objectAtIndex:5] != (id)[NSNull null]){
+            [metadata setString:[command.arguments objectAtIndex:5] forKey:kGCKMetadataKeyAlbumTitle];
+        }
+        //If image is not null add to metadata
+        if([command.arguments objectAtIndex:6] != (id)[NSNull null]){
+            NSURL *imageUrl = [NSURL URLWithString:[command.arguments objectAtIndex:6]];
+            //TODO test out some different image sizes to see the effects and either make dynamic or document
+            GCKImage *image = [[GCKImage alloc] initWithURL:imageUrl width:500 height:500];
+            [metadata addImage:image];
+        }
+        //If artist is not null add to metadata
+        if([command.arguments objectAtIndex:7] != (id)[NSNull null]){
+            [metadata setString:[command.arguments objectAtIndex:7] forKey:kGCKMetadataKeyArtist];
+        }
+        //If albumArtist is not null add to metadata
+        if([command.arguments objectAtIndex:8] != (id)[NSNull null]){
+            [metadata setString:[command.arguments objectAtIndex:8] forKey:kGCKMetadataKeyAlbumArtist];
+        }
+        //If trackNumber is not null add to metadata
+        if([command.arguments objectAtIndex:9] != (id)[NSNull null]){
+            [metadata setInteger:[(NSNumber *)[command.arguments objectAtIndex:9] integerValue] forKey:kGCKMetadataKeyTrackNumber];
+        }
+        //load the media with metadata
+        [self.mediaChannelDelegate loadMedia: [[GCKMediaInformation alloc]
+                                               initWithContentID:mediaUrl
+                                               streamType:gckStreamType
+                                               contentType:contentType
+                                               metadata:metadata
+                                               streamDuration:0
+                                               customData:nil]];
     }
     //handle photo media metadata
     if(metadataType == 4){
         NSLog(@"photo metadata type");
+        //init a metadata object with type movie
+        GCKMediaMetadata *metadata = [[GCKMediaMetadata alloc] initWithMetadataType:GCKMediaMetadataTypePhoto];
+        
+        //Title is a required parameter so no need to test for null
+        [metadata setString:[command.arguments objectAtIndex:4] forKey:kGCKMetadataKeyTitle];
+        
+        //If albumTitle is not null add to metadata
+        if([command.arguments objectAtIndex:5] != (id)[NSNull null]){
+            [metadata setString:[command.arguments objectAtIndex:5] forKey:kGCKMetadataKeyLocationName];
+        }
+        //If artist is not null add to metadata
+        if([command.arguments objectAtIndex:6] != (id)[NSNull null]){
+           [metadata setString:[command.arguments objectAtIndex:6] forKey:kGCKMetadataKeyArtist];
+        }
+        //load the media with metadata
+        [self.mediaChannelDelegate loadMedia: [[GCKMediaInformation alloc]
+                                               initWithContentID:mediaUrl
+                                               streamType:gckStreamType
+                                               contentType:contentType
+                                               metadata:metadata
+                                               streamDuration:0
+                                               customData:nil]];
     }
 }
 

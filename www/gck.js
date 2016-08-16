@@ -573,10 +573,10 @@ exports.loadMedia = function (mediaUrl, mediaType, metadataType, metadata, strea
 
     //generic metadata
     if(metadataType == 0){
-
+        console.log("gck generic type");
         //reject if metadata missing
         if(metadata.title == undefined){
-            Promise.reject("missing required metadata for type generic");
+            Promise.reject("metadata title is required for generic media");
         }
         //assign metadata to args
         _args[4] = metadata.title;
@@ -586,9 +586,10 @@ exports.loadMedia = function (mediaUrl, mediaType, metadataType, metadata, strea
 
     //movie metadata
     if(metadataType == 1){
+
         //reject if metadata missing
         if(metadata.title == undefined){
-            Promise.reject("missing required metadata for type movie");
+            Promise.reject("metadata title is required for movie media");
         }
         //assign metadata to args
         _args[4] = metadata.title;
@@ -600,23 +601,25 @@ exports.loadMedia = function (mediaUrl, mediaType, metadataType, metadata, strea
     }
     //tv show metadata
     if(metadataType == 2){
+
         //reject if metadata missing
         if(metadata.title == undefined){
-            Promise.reject("missing required metadata for type movie");
+            Promise.reject("metadata title is required for tv show media");
         }
         //assign metadata to args
         _args[4] = metadata.title;
         _args[5] = metadata.seriesTitle;
         _args[6] = metadata.image;
-        _args[7] = metadata.seasonNumber;
+        _args[7] = metadata.releaseDate;
         _args[8] = metadata.episodeNumber;
-        _args[9] = metadata.releaseDate;
+        _args[9] = metadata.seasonNumber;
     }
     //musictrack metadata
     if(metadataType == 3){
+
         //reject if metadata missing
         if(metadata.title == undefined){
-            Promise.reject("missing required metadata for type movie");
+            Promise.reject("metadata title is required for music track media");
         }
         //assign metadata to args
         _args[4] = metadata.title;
@@ -628,9 +631,10 @@ exports.loadMedia = function (mediaUrl, mediaType, metadataType, metadata, strea
     }
     //photo metadata
     if(metadataType == 4){
+        
         //reject if metadata missing
         if(metadata.title == undefined){
-            Promise.reject("missing required metadata for type movie");
+            Promise.reject("metadata title is required for photo media");
         }
         //assign metadata to args
         _args[4] = metadata.title;
