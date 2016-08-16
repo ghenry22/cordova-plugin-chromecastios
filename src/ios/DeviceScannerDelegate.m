@@ -25,9 +25,9 @@
     // Establish filter criteria.
     GCKFilterCriteria *filterCriteria = [GCKFilterCriteria criteriaForAvailableApplicationWithID:appId];
     
-    // Initialize device scanner.
+    // Initialize device scanner only find devices supported by target appID
     self.deviceScanner = [[GCKDeviceScanner alloc] initWithFilterCriteria:filterCriteria];
-    //self.deviceScanner = [[GCKDeviceScanner alloc] init];
+
     [self.deviceScanner addListener:self];
     [self.deviceScanner startScan];
     self.scanStatus = @"started";
@@ -42,32 +42,29 @@
 
 - (void)stopScanning {
     
-    if(self.deviceScanner.scanning){
-        [self.deviceScanner stopScan];
-        self.scanStatus = @"stopped";
+    [self.deviceScanner removeListener:self];
+    [self.deviceScanner stopScan];
+    self.scanStatus = @"stopped";
 
     CDVPluginResult *pluginResult;
     pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
                                  messageAsString:self.scanStatus];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:self.scanCallbackId];
     self.scanCallbackId = @"";
-    }
+
 }
 
 - (void)enablePassiveScan:(BOOL)enablePassive {
-
-    if(self.deviceScanner.scanning){
         
-        if(!self.deviceScanner.passiveScan && enablePassive){
-            [self.deviceScanner setPassiveScan:true];
-            self.scanStatus = @"passive";
-        }
-        if(self.deviceScanner.passiveScan && !enablePassive){
-            [self.deviceScanner setPassiveScan:false];
-            self.scanStatus = @"started";
-        }
-        
+    if(enablePassive){
+        [self.deviceScanner setPassiveScan:true];
+        self.scanStatus = @"passive";
     }
+    if(!enablePassive){
+        [self.deviceScanner setPassiveScan:false];
+        self.scanStatus = @"started";
+    }
+        
     CDVPluginResult *pluginResult;
     pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
                                      messageAsBool:self.deviceScanner.passiveScan];

@@ -518,6 +518,9 @@ exports.startMediaChannel = function () {
 };
 
 /**
+ *
+ * DEPRECATED.  KEPT FOR REFERENCE.  SEE UPDATED LOADMEDIA BELOW
+ *
  * Load a media item on the default media channel.
  *
  * @param title, title to display
@@ -525,8 +528,150 @@ exports.startMediaChannel = function () {
  * @param mediaType, mediaType (e.g. "video/mp4")
  * @param subtitle to display
  */
-exports.loadMedia = function (title, mediaUrl, mediaType, subtitle) {
+// exports.loadMedia2 = function (title, mediaUrl, mediaType, subtitle) {
+//     var t = this;
+//     return new Promise(function(resolve, reject){
+
+//         cordova.exec(function(response){
+//             var _response = response;
+//             resolve(_response);
+//         }, function(error){
+//             var _error = error;
+//             reject(_error);
+//         }, "FWChromecast", "loadMedia", [title, mediaUrl, mediaType, subtitle]);
+//     })
+// };
+
+/**
+ * Load a media item on the default media channel.
+ *
+ * @param mediaUrl, absolute url to the media item
+ * @param mediaType, mediaType (e.g. "video/mp4")
+ * @param metadataType, integer value where 0=generic, 1=movie, 2=tvshow, 3=musicTrack, 4=photo
+ * @param metadata, object containing required metadata, metadata.title is required, others are optional
+ * @param streamType, integer value where 0=none, 1=buffered, 2=live, 99=unknown. defaults to buffered
+ *  change to live for live streams, otherwise buffered should be sufficient
+ *
+ * note: releaseDate should be submitted as a String YYYYMMDD.  If month and day are not relevant set them to 01.
+ *
+ */
+exports.loadMedia = function (mediaUrl, mediaType, metadataType, metadata, streamType) {
     var t = this;
+    var _args = [];
+    var _streamType = 1;
+    var _iso8601ReleaseDate = "";
+
+    if(mediaUrl == undefined || mediaType == undefined || metadataType == undefined || metadata == undefined){
+        Promise.reject("missing parameters");
+    }
+
+    if(streamType != undefined){
+        _streamType = streamType;
+    }
+
+    //check if a releaseDate has been provided
+    if(metadata.releaseDate != undefined){
+        var _inputLength = metadata.releaseDate.length;
+
+        //ignore incomplete release date
+        if(_inputLength < 4){
+            _iso8601ReleaseDate = undefined;
+        }else{
+            //handle a full releaseDate
+            if(_inputLength == 8){
+                var _year = metadata.releaseDate.substring(0,4);
+                var _month = metadata.releaseDate.substring(4,6);
+                var _day = metadata.releaseDate.substring(6,8);
+                var _date = new Date(_year, _month, _day, "00");
+                _iso8601ReleaseDate = _date.toISOString();
+            //handle year only release date
+            } else if(_inputLength == 4){
+                var _year = metadata.releaseDate.substring(0,4);
+                var _date = new Date(_year, "00", "00", "00");
+                _iso8601ReleaseDate = _date.toISOString();
+            //handle any other scenario of incorrect or incomplete data
+            } else {
+                _iso8601ReleaseDate = undefined;
+            }
+        }
+    }
+
+    //Assign common values
+    _args[0] = mediaUrl;
+    _args[1] = mediaType;
+    _args[2] = metadataType;
+    _args[3] = _streamType;
+
+    //generic metadata
+    if(metadataType == 0){
+        console.log("gck generic type");
+        //reject if metadata missing
+        if(metadata.title == undefined){
+            Promise.reject("metadata title is required for generic media");
+        }
+        //assign metadata to args
+        _args[4] = metadata.title;
+        _args[5] = metadata.subtitle;
+        _args[6] = metadata.image;
+    }
+
+    //movie metadata
+    if(metadataType == 1){
+
+        //reject if metadata missing
+        if(metadata.title == undefined){
+            Promise.reject("metadata title is required for movie media");
+        }
+        //assign metadata to args
+        _args[4] = metadata.title;
+        _args[5] = metadata.subtitle;
+        _args[6] = metadata.image;
+        _args[7] = _iso8601ReleaseDate;
+        _args[8] = metadata.studio;
+    }
+    //tv show metadata
+    if(metadataType == 2){
+
+        //reject if metadata missing
+        if(metadata.title == undefined){
+            Promise.reject("metadata title is required for tv show media");
+        }
+        //assign metadata to args
+        _args[4] = metadata.title;
+        _args[5] = metadata.seriesTitle;
+        _args[6] = metadata.image;
+        _args[7] = _iso8601ReleaseDate;
+        _args[8] = metadata.episodeNumber;
+        _args[9] = metadata.seasonNumber;
+    }
+    //musictrack metadata
+    if(metadataType == 3){
+
+        //reject if metadata missing
+        if(metadata.title == undefined){
+            Promise.reject("metadata title is required for music track media");
+        }
+        //assign metadata to args
+        _args[4] = metadata.title;
+        _args[5] = metadata.albumTitle;
+        _args[6] = metadata.image;
+        _args[7] = metadata.artist;
+        _args[8] = metadata.albumArtist;
+        _args[9] = metadata.trackNumber;
+    }
+    //photo metadata
+    if(metadataType == 4){
+
+        //reject if metadata missing
+        if(metadata.title == undefined){
+            Promise.reject("metadata title is required for photo media");
+        }
+        //assign metadata to args
+        _args[4] = metadata.title;
+        _args[5] = metadata.locationName;
+        _args[6] = metadata.artist;
+    }
+
     return new Promise(function(resolve, reject){
 
         cordova.exec(function(response){
@@ -535,7 +680,7 @@ exports.loadMedia = function (title, mediaUrl, mediaType, subtitle) {
         }, function(error){
             var _error = error;
             reject(_error);
-        }, "FWChromecast", "loadMedia", [title, mediaUrl, mediaType, subtitle]);
+        }, "FWChromecast", "loadMedia", _args);
     })
 };
 
