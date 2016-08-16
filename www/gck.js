@@ -518,6 +518,9 @@ exports.startMediaChannel = function () {
 };
 
 /**
+ *
+ * DEPRECATED.  KEPT FOR REFERENCE.  SEE UPDATED LOADMEDIA BELOW
+ *
  * Load a media item on the default media channel.
  *
  * @param title, title to display
@@ -525,19 +528,19 @@ exports.startMediaChannel = function () {
  * @param mediaType, mediaType (e.g. "video/mp4")
  * @param subtitle to display
  */
-exports.loadMedia2 = function (title, mediaUrl, mediaType, subtitle) {
-    var t = this;
-    return new Promise(function(resolve, reject){
+// exports.loadMedia2 = function (title, mediaUrl, mediaType, subtitle) {
+//     var t = this;
+//     return new Promise(function(resolve, reject){
 
-        cordova.exec(function(response){
-            var _response = response;
-            resolve(_response);
-        }, function(error){
-            var _error = error;
-            reject(_error);
-        }, "FWChromecast", "loadMedia", [title, mediaUrl, mediaType, subtitle]);
-    })
-};
+//         cordova.exec(function(response){
+//             var _response = response;
+//             resolve(_response);
+//         }, function(error){
+//             var _error = error;
+//             reject(_error);
+//         }, "FWChromecast", "loadMedia", [title, mediaUrl, mediaType, subtitle]);
+//     })
+// };
 
 /**
  * Load a media item on the default media channel.
