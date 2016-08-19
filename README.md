@@ -5,9 +5,11 @@ This project started as a fork of the work originally created by https://github.
 
 This plugin provides an interface to cast media from within cordova apps on iOS to chromecast devices
 
-Currently only accomodates specifying generic media metadata but otherwise is fully functional
+Supports all media metadata type supported by chromecast as of v1.0.4
 
 For most events where we care about the device response the plugin implements Promises so you don't have to deal with callbacks.
+
+This plugin is now feature complete for using a chromecast from ios cordova app.
 
 ## Install
 
