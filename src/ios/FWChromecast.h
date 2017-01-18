@@ -38,7 +38,7 @@
 - (void)getPosition:(CDVInvokedUrlCommand*)command;
 - (void)getChannelStatus:(CDVInvokedUrlCommand*)command;
 - (void)getMediaStatus:(CDVInvokedUrlCommand*)command;
-- (void)sendMessage:(NSString*)message;
+- (void)sendMessage:(CDVInvokedUrlCommand*)command;
 - (void)getDefaultReceiverApplicationID:(CDVInvokedUrlCommand*)command; 
 @property(nonatomic, strong) DeviceScannerDelegate* deviceScannerDelegate;
 @property(nonatomic, strong) SelectDeviceDelegate* selectDeviceDelegate;
