@@ -128,7 +128,11 @@
     [self.selectDeviceDelegate registerCallbackId:command.callbackId];
     [self.selectDeviceDelegate selectDevice:[self.deviceScannerDelegate findDevice:deviceId]];
 }
-- (void)sendMessage:(NSString *)message {
+
+- (void)sendMessage:(CDVInvokedUrlCommand*)command
+{
+    NSString* message = [command.arguments objectAtIndex:0];
+    
     [self.selectDeviceDelegate sendMessage:message];
 }
 
