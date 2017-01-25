@@ -411,6 +411,67 @@ exports.selectDevice = function (device) {
 };
 
 /**
+ * Get a list of currently available devices
+ *
+ */
+exports.getDeviceList = function () {
+    var t = this;
+    if(t.initComplete){
+        return t.devices;
+    } else {
+        return [];
+    }
+}
+
+/**
+ * Select a device to use by device ID
+ *
+ * @param deviceID(string), the id of the device to select (must be currently available)
+ */
+exports.selectDeviceById = function (deviceID) {
+    var t = this;
+    var _devicesLength = t.devices.length;
+    var _matchedDevice = {};
+    var _matchFound = false;
+
+    if (typeof (deviceID) == 'undefined') {
+        return Promise.reject(false);
+    }
+
+    if (t.devices.indexOf(device) == -1) {
+        return Promise.reject(false);
+    }
+
+    for(var i=0;i<_devicesLength;i++){
+        //matched ID to available device
+        if(t.devices[i].id == deviceID){
+            _matchedDevice = t.devices[i];
+            _matchFound = true;
+        }
+        //no device with matching ID found in list
+        if(i == _devicesLength-1){
+            if(!_matchFound){
+                return Promise.reject(false);
+            }
+        }
+    }
+
+    return new Promise(function (resolve, reject) {
+
+        cordova.exec(function (response) {
+            t.connected = true;
+            t.connectedDevice.friendlyName = response.friendlyName;
+            t.connectedDevice.ipAddress = response.ipAddress;
+            t.connectedDevice.id = response.id;
+            t.connectedDevice.servicePort = response.servicePort;
+            resolve(response);
+        }, function(error){
+            reject(error);
+        }, "FWChromecast", "selectDevice", [_matchedDevice.id]);
+    });
+};
+
+/**
  * After selecting a device, we can start the application.
  *
  */
