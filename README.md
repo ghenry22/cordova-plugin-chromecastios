@@ -286,6 +286,10 @@ Device Status Events
           console.log("device disconnected");
           //do something
         }
+        if(event.eventType == "timeout"){
+          console.log("device connection timeout");
+          //do something
+        }
     });
 
 Volume Events
