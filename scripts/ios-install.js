@@ -25,7 +25,7 @@ if (!isMac) {
 	};
 
 	function safePath(unsafePath) {
-		return path.join(process.cwd(), "./platforms/ios/", unsafePath);
+		return path.join(process.cwd(), "./platforms/ios/", unsafePath).replace(' ', '\\ ');
 	}
 
 	function iOSInstall() {}
