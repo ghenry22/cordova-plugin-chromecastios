@@ -84,7 +84,7 @@ Select device to connect to by ID (v1.0.6)
 
 Get the default cast receiver application ID
     
-    cordova.plugins.chromecastios.getDefaultApplicationID().then(function(response){
+    cordova.plugins.chromecastios.getDefaultReceiverApplicationID().then(function(response){
         var defaultAppId = response;
         //do something
     });
