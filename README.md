@@ -1,4 +1,6 @@
 
+# Use https://github.com/jellyfin/cordova-plugin-chromecast
+
 # Cordova Chromecast Plugin (ios)
 
 This project started as a fork of the work originally created by https://github.com/franzwilding, without which this plugin would not exist.
